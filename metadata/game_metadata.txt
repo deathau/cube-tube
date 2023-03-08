@@ -1,7 +1,7 @@
-devid=myitchusername
-devtitle=My Name
-gameid=my-game-title
-gametitle=My Game Title
+devid=death.au
+devtitle=death.au
+gameid=cube-tube
+gametitle=Cube Tube
 version=0.1-dev
 icon=metadata/icon.png
 

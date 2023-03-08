@@ -21,7 +21,7 @@ module Scene
 
       draw_bg(args, BLACK)
 
-      labels << label("GAMEPLAY", x: 40, y: args.grid.top - 40, size: SIZE_LG, font: FONT_BOLD)
+      # labels << label("GAMEPLAY", x: 40, y: args.grid.top - 40, size: SIZE_LG, font: FONT_BOLD)
       args.outputs.labels << labels
       args.outputs.sprites << sprites
     end

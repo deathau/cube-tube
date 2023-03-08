@@ -6,7 +6,7 @@ module Scene
       options = [
         {
           key: :start,
-          on_select: -> (args) { Scene.switch(args, :gameplay, reset: true) }
+          on_select: -> (args) { Scene.switch(args, :cube_tube, reset: true) }
         },
         {
           key: :settings,
