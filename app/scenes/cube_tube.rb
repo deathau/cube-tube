@@ -34,15 +34,15 @@ class BlockTubeGame
     ]
 
     @sprite_index = [
-      "sprites/square/black.png",
-      "sprites/square/red.png",
-      "sprites/square/green.png",
-      "sprites/square/blue.png",
-      "sprites/square/yellow.png",
-      "sprites/square/indigo.png",
-      "sprites/square/violet.png",
-      "sprites/square/orange.png",
-      "sprites/square/gray.png",
+      Sprite.for(:black),
+      Sprite.for(:red),
+      Sprite.for(:green),
+      Sprite.for(:blue),
+      Sprite.for(:yellow),
+      Sprite.for(:indigo),
+      Sprite.for(:violet),
+      Sprite.for(:orange),
+      Sprite.for(:gray)
     ]
 
     @grid = []
