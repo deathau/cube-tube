@@ -46,6 +46,5 @@ module Scene
 
       args.outputs.labels << labels
     end
-
   end
 end

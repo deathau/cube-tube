@@ -80,9 +80,9 @@ class CubeTubeGame
 
     @bg_x = 0
 
-    each 0..@grid_w - 1 do |x|
+    (0..@grid_w - 1).each do |x|
       @grid[x] = []
-      each 0..@grid_h - 1 do |y|
+      (0..@grid_h - 1).each do |y|
         @grid[x][y] = 0
       end
     end
@@ -118,36 +118,27 @@ class CubeTubeGame
       @bg_x %= @bg_w
     end
 
-    @args.outputs.sprites << [@bg_x,0,@bg_w,720,Sprite.for(:tunnel)]
-    @args.outputs.sprites << [@bg_x-@bg_w,0,@bg_w,720,Sprite.for(:tunnel)]
+    Sprite.for(:tunnel).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
+    Sprite.for(:tunnel).render(@args, { x: @bg_x - @bg_w, y: 0, w: @bg_w, h: 720 })
 
-    @args.outputs.sprites  << [
-      0,
-      @grid_x - 64,
-      1597,
-      540,
-      Sprite.for(:train)
-    ]
+    Sprite.for(:train).render(@args, { x: 0, y: @grid_x - 64 })
   end
 
   def render_foreground
-    @args.outputs.sprites  << [
-      0,
-      @grid_x - 64,
-      1597,
-      540,
-      Sprite.for(:train_fore)
-    ]
+    Sprite.for(:train_fore).render(@args, { x: 0, y: @grid_x - 64 })
   end
 
   # x and y are positions in the grid, not pixels
   def render_block x, y, color
-    @args.outputs.sprites << [
-      (1280 - @grid_y) - (y * @blocksize) - 6,
-      @grid_x + (x * @blocksize),
-      @blocksize + 6, @blocksize,
-      @sprite_index[color]
-    ]
+    @sprite_index[color].render(
+      @args,
+      {
+        x: (1280 - @grid_y) - (y * @blocksize) - 6,
+        y: @grid_x + (x * @blocksize),
+        w: @blocksize + 6,
+        h: @blocksize
+      }
+    )
   end
 
   def render_grid
@@ -182,10 +173,7 @@ class CubeTubeGame
     screen_w = 250
     screen_h = 200
 
-    @args.outputs.sprites << [
-      screen_x, screen_y + 10, screen_w, screen_h + 10,
-      Sprite.for(:screen)
-    ]
+    Sprite.for(:screen).render(@args, { x: screen_x, y: screen_y + 10, w: screen_w, h: screen_h + 10 })
     
     next_piece = @line_clear_timer <= 0 ? @next_piece : @current_piece
     # render_grid_border *@next_piece_box, 8
@@ -207,10 +195,7 @@ class CubeTubeGame
       :screen_s4
     end
 
-    @args.outputs.sprites << [
-      screen_x, screen_y + 10, screen_w, screen_h + 10,
-      Sprite.for(screen_s)
-    ]
+    Sprite.for(screen_s).render(@args, { x: screen_x, y: screen_y + 10, w: screen_w, h: screen_h + 10 })
   end
 
   def render_score
