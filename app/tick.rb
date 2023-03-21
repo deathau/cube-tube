@@ -11,7 +11,7 @@ def tick(args)
   args.outputs.background_color = TRUE_BLACK.values
 
   args.state.has_focus ||= true
-  args.state.scene ||= :main_menu
+  Scene.push(args, :main_menu, reset: true) if !args.state.scene
 
   track_swipe(args) if mobile?
 

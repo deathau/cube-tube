@@ -13,13 +13,9 @@ module Scene
     # changed to so any data is cleared out
     # ex:
     #   Scene.switch(args, :gameplay)
-    def switch(args, scene, reset: false, return_to: nil)
-      args.state.scene_to_return_to = return_to if return_to
-
-      if scene == :back && args.state.scene_to_return_to
-        scene = args.state.scene_to_return_to
-        args.state.scene_to_return_to = nil
-      end
+    def switch(args, scene, reset: false, push_or_pop: false)
+      # if we're here /not/ from push or pop, clear the scene stack
+      args.state.scene_stack.clear unless push_or_pop
 
       if reset
         args.state.send(scene)&.current_option_i = nil
@@ -30,7 +26,22 @@ module Scene
       end
 
       args.state.scene = scene
-      raise FinishTick.new
+      raise FinishTick, 'finish tick early'
+    end
+
+    # Change the current scene and push the previous scene onto the stack
+    def push(args, scene, reset: false)
+      puts "Pushing #{scene}"
+      args.state.scene_stack ||= []
+      args.state.scene_stack.push(args.state.scene)
+
+      switch(args, scene, reset: reset, push_or_pop: true)
+    end
+
+    # Return to the previous scene on the stack
+    def pop(args, reset: false)
+      scene = !args.state.scene_stack || args.state.scene_stack.empty? ? :back : args.state.scene_stack.pop
+      switch(args, scene, reset: reset, push_or_pop: true)
     end
   end
 end

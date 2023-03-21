@@ -29,7 +29,7 @@ module Scene
         },
         {
           key: :back,
-          on_select: -> (args) { Scene.switch(args, :back) }
+          on_select: -> (args) { Scene.pop(args) }
         },
       ]
 

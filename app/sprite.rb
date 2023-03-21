@@ -2,24 +2,25 @@ module Sprite
   # annoying to track but useful for reloading with +i+ in debug mode; would be
   # nice to define a different way
   SPRITES = {
-    bullet: 'sprites/bullet.png',
-    enemy: 'sprites/enemy.png',
-    enemy_king: 'sprites/enemy_king.png',
-    enemy_super: 'sprites/enemy_super.png',
-    exp_chip: 'sprites/exp_chip.png',
-    familiar: 'sprites/familiar.png',
-    player: 'sprites/player.png',
+    train: 'sprites/train-1.png',
+    train_fore: 'sprites/train-2.png',
+    screen: 'sprites/screen.png',
+    screen_s1: 'sprites/screen-s1.png',
+    screen_s2: 'sprites/screen-s2.png',
+    screen_s3: 'sprites/screen-s3.png',
+    screen_s4: 'sprites/screen-s4.png',
+    tunnel: 'sprites/tunnel.png',
     pause: 'sprites/pause.png',
-    gray: 'sprites/square/gray.png',
-    black: 'sprites/square/black.png',
-    white: 'sprites/square/white.png',
-    red: 'sprites/square/red.png',
-    green: 'sprites/square/green.png',
-    blue: 'sprites/square/blue.png',
-    yellow: 'sprites/square/yellow.png',
-    indigo: 'sprites/square/indigo.png',
-    violet: 'sprites/square/violet.png',
-    orange: 'sprites/square/orange.png'
+    gray: 'sprites/box/gray.png',
+    black: 'sprites/box/black.png',
+    white: 'sprites/box/white.png',
+    red: 'sprites/box/red.png',
+    green: 'sprites/box/green.png',
+    blue: 'sprites/box/blue.png',
+    yellow: 'sprites/box/yellow.png',
+    indigo: 'sprites/box/indigo.png',
+    violet: 'sprites/box/violet.png',
+    orange: 'sprites/box/orange.png'
   }
 
   class << self

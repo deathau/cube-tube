@@ -10,7 +10,7 @@ module Scene
         },
         {
           key: :settings,
-          on_select: -> (args) { Scene.switch(args, :settings, reset: true, return_to: :main_menu) }
+          on_select: -> (args) { Scene.push(args, :settings, reset: true) }
         },
       ]
 

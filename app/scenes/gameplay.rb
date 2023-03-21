@@ -28,7 +28,7 @@ module Scene
 
     def pause(args)
       play_sfx(args, :select)
-      return Scene.switch(args, :paused, reset: true)
+      return Scene.push(args, :paused, reset: true)
     end
 
     def tick_pause_button(args, sprites)

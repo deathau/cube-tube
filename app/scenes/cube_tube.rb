@@ -1,37 +1,33 @@
+# frozen_string_literal: true
+
+# Extension to the scene class for the cube tube scene
 module Scene
   class << self
     def tick_cube_tube(args)
+      # call the gameplay scene tick method (handles pause menu, etc)
       tick_gameplay(args)
-      args.state.game ||= BlockTubeGame.new args
+      args.state.game ||= CubeTubeGame.new args
       args.state.game.tick
     end
   end
 end
 
-
-class BlockTubeGame
+#
+class CubeTubeGame
   def initialize args
     @args = args
     
     @blocksize = 30
     @grid_w = 10
     @grid_h = 20
-    @grid_x = (720 - (@grid_w * @blocksize)) / 2
-    @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) + 150
+    @grid_x = 115
+    @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) + 143
+    @start_grid_x = @grid_x
+    @start_grid_y = @grid_y
+    @bg_x = 0
+    @bg_w = 1335
 
-    @next_piece_box = [-1, -9, 7, 7]
-
-    @color_index = [
-      [000, 000, 000],
-      [255, 000, 000],
-      [000, 255, 000],
-      [000, 000, 255],
-      [255, 255, 000],
-      [000, 255, 255],
-      [255, 000, 255],
-      [255, 127, 000],
-      [127, 127, 127],
-    ]
+    @next_piece_box = [2, -9.5, 7, 7]
 
     @sprite_index = [
       Sprite.for(:black),
@@ -61,12 +57,14 @@ class BlockTubeGame
     @lines_to_clear = []
     @line_clear_timer = 0
 
+    @music_queue = []
+
     reset_game
   end
 
   def reset_game
     @lines = 0
-    @level = 9
+    @level = 0
     @current_speed = get_speed
     @next_move = @current_speed
     @gameover = false
@@ -80,12 +78,16 @@ class BlockTubeGame
     @lines_to_clear = []
     @line_clear_timer = 0
 
-    for x in 0..@grid_w-1 do
+    @bg_x = 0
+
+    each 0..@grid_w - 1 do |x|
       @grid[x] = []
-      for y in 0..@grid_h-1 do
+      each 0..@grid_h - 1 do |y|
         @grid[x][y] = 0
       end
     end
+
+    @music_queue = [:music1, :music2]
   end
 
   def render_grid_border x, y, w, h, color
@@ -103,28 +105,54 @@ class BlockTubeGame
 
   def render_background
     # draw a solid black background
-    @args.outputs.solids  << [
+    @args.outputs.solids << [
       0,
       0,
       1280,
       1280,
-      *@color_index[0]
+      0, 0, 0
+    ]
+
+    @bg_x += (@level+1)*2 unless @gameover
+    if(@bg_x >= @bg_w) 
+      @bg_x %= @bg_w
+    end
+
+    @args.outputs.sprites << [@bg_x,0,@bg_w,720,Sprite.for(:tunnel)]
+    @args.outputs.sprites << [@bg_x-@bg_w,0,@bg_w,720,Sprite.for(:tunnel)]
+
+    @args.outputs.sprites  << [
+      0,
+      @grid_x - 64,
+      1597,
+      540,
+      Sprite.for(:train)
+    ]
+  end
+
+  def render_foreground
+    @args.outputs.sprites  << [
+      0,
+      @grid_x - 64,
+      1597,
+      540,
+      Sprite.for(:train_fore)
     ]
   end
 
   # x and y are positions in the grid, not pixels
   def render_block x, y, color
     @args.outputs.sprites << [
-      (1280 - @grid_y) - (y * @blocksize),
+      (1280 - @grid_y) - (y * @blocksize) - 6,
       @grid_x + (x * @blocksize),
-      @blocksize, @blocksize,
+      @blocksize + 6, @blocksize,
       @sprite_index[color]
     ]
   end
 
   def render_grid
 
-    render_grid_border -1, -1, @grid_w + 2, @grid_h + 2, 8
+    #render_grid_border -1, -1, @grid_w + 2, @grid_h + 2, 8
 
     for x in 0..@grid_w-1 do
       for y in 0..@grid_h-1 do
@@ -148,14 +176,41 @@ class BlockTubeGame
   end
 
   def render_next_piece
+
+    screen_x = @grid_y + 400
+    screen_y = @grid_x + 80
+    screen_w = 250
+    screen_h = 200
+
+    @args.outputs.sprites << [
+      screen_x, screen_y + 10, screen_w, screen_h + 10,
+      Sprite.for(:screen)
+    ]
+    
     next_piece = @line_clear_timer <= 0 ? @next_piece : @current_piece
-    render_grid_border *@next_piece_box, 8
+    # render_grid_border *@next_piece_box, 8
     centerx = (@next_piece_box[2] - next_piece.length) / 2
     centery = (@next_piece_box[3] - next_piece[0].length) / 2
 
     render_piece next_piece, @next_piece_box[0] + centerx, @next_piece_box[1] + centery
 
-    @args.outputs.labels << [ 892, 431, "Next piece", 10, 255, 255, 255, 255 ]
+    @args.outputs.labels << [screen_x + 33, screen_y + screen_h - 8, "Next piece", 8, 255, 255, 255, 255 ]
+
+    screen_s = case (@args.state.tick_count % 32)
+    when 0..7
+      :screen_s1
+    when 8..15
+      :screen_s2
+    when 16..23
+      :screen_s3
+    when 24..31
+      :screen_s4
+    end
+
+    @args.outputs.sprites << [
+      screen_x, screen_y + 10, screen_w, screen_h + 10,
+      Sprite.for(screen_s)
+    ]
   end
 
   def render_score
@@ -174,6 +229,7 @@ class BlockTubeGame
     render_next_piece
     render_current_piece
     render_grid
+    render_foreground
     render_score
     render_gameover if @showgameover
   end
@@ -245,17 +301,23 @@ class BlockTubeGame
       if full # no empty space in the row
         @lines_to_clear.push y
         @lines += 1
-        @level += 1 if (@lines%10).floor == 0
         @line_clear_timer = 70
+        if (@lines%10).floor == 0
+          @level += 1 
+          @args.audio[:music].looping = false
+        end
       end
     end
 
     select_next_piece
     if @lines_to_clear.empty?
+      play_sfx(@args, :drop)
       if current_piece_colliding
         @gameover = true
+        stop_music(@args)
       end
     else
+      play_sfx(@args, :clear)
       @current_speed = get_speed
     end
 
@@ -283,6 +345,7 @@ class BlockTubeGame
   end
 
   def rotate_current_piece_left
+    play_sfx(@args, :rotate)
     @current_piece = @current_piece.transpose.map(&:reverse)
     if(@current_piece_x + @current_piece.length) >= @grid_w
       @current_piece_x = @grid_w - @current_piece.length
@@ -290,6 +353,7 @@ class BlockTubeGame
   end
 
   def rotate_current_piece_right
+    play_sfx(@args, :rotate)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
@@ -330,9 +394,18 @@ class BlockTubeGame
       return
     end
 
-    if @line_clear_timer > 0
+    if @args.audio[:music]
+      resume_music(@args) if @args.audio[:music].paused
+      @args.audio[:music].pitch = 1 + (@level * 0.125)
+    else
+      music = @music_queue.shift
+      @music_queue.push music
+      play_music(@args, music)
+    end
+
+    if @line_clear_timer.positive?
       @line_clear_timer -= 1
-      if @line_clear_timer == 0
+      if @line_clear_timer.zero?
         for y in @lines_to_clear
           for i in y.downto(1) do
             for j in 0..@grid_w-1
@@ -343,6 +416,7 @@ class BlockTubeGame
             @grid[i][0] = 0
           end
         end
+        play_sfx(@args, :drop)
         @lines_to_clear = []
       end
       return
@@ -352,20 +426,34 @@ class BlockTubeGame
       if @current_piece_x > 0
         @current_piece_x -= 1
         if current_piece_colliding
+          play_sfx(@args, :move_deny)
           @current_piece_x += 1
+        else
+          play_sfx(@args, :move)
         end
+      else
+        play_sfx(@args, :move_deny)
       end
     end
     if k.key_down.up || k.key_down.w || c.key_down.up
       if (@current_piece_x + @current_piece.length) < @grid_w
         @current_piece_x += 1
         if current_piece_colliding
+          play_sfx(@args, :move_deny)
           @current_piece_x -= 1
+        else
+          play_sfx(@args, :move)
         end
+      else
+        play_sfx(@args, :move_deny)
       end
     end
     if k.key_down.left || k.key_held.left || k.key_down.a || k.key_held.a || c.key_down.left || c.key_held.left
       @next_move -= @current_speed / 3
+    end
+    if k.key_down.plus || k.key_down.equal_sign
+      @level += 1
+      @current_speed = get_speed
     end
 
     if k.key_down.q || c.key_down.a
@@ -373,6 +461,13 @@ class BlockTubeGame
     end
     if k.key_down.e || c.key_down.b
       rotate_current_piece_right
+    end
+
+    case @args.state.tick_count % (@current_speed * 6)
+    when 0..3, (@current_speed * 2)..((@current_speed * 2) + 3)
+      @grid_x = @start_grid_x + 3
+    else
+      @grid_x = @start_grid_x
     end
 
     @next_move -= 1

@@ -28,3 +28,8 @@ end
 def resume_music(args)
   args.audio[:music].paused = false
 end
+
+# stop the currently playing music track
+def stop_music(args)
+  args.audio.delete(:music)
+end
