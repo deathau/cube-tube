@@ -23,6 +23,7 @@ module Scene
 
         # you can also add custom reset logic as-needed for specific scenes
         # here
+        args.state.game.reset_game if args.state.game
       end
 
       args.state.scene = scene
