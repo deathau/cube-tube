@@ -1,0 +1,21 @@
+# the extension popped up a warning to include this:
+AllCops:
+  NewCops: enable
+
+# my functions have too many assignments, I get it.
+# I have a lot to keep track of.
+Metrics/AbcSize:
+  Enabled: false
+# 10-line methods are /way/ too short
+Metrics/MethodLength:
+  Max: 100
+# Yeah, I've got constants with mutables in them. Doesn't bother me.
+Style/MutableConstant:
+  Enabled: false
+# I like my hash alignment neat.
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+# DragonRuby required the file extension, therefore /not/ redundant.
+RedundantFileExtensionInRequire:
+  Enabled: false
