@@ -55,7 +55,7 @@ module Menu
 
         if args.inputs.mouse.up && args.inputs.mouse.inside_rect?(button_border)
           o = options.find { |o| o[:key] == l[:key] }
-          play_sfx(args, :menu)
+          Sound.play(args, :menu)
           o[:on_select].call(args) if o
         end
       end
@@ -75,7 +75,7 @@ module Menu
         menu_state.hold_delay -= 1
 
         if menu_state.hold_delay <= 0
-          play_sfx(args, :menu)
+          Sound.play(args, :menu)
           index = menu_state.current_option_i
           if move == :up
             index -= 1
@@ -94,7 +94,7 @@ module Menu
       end
 
       if primary_down?(args.inputs)
-        play_sfx(args, :select)
+        Sound.play(args, :select)
         options[menu_state.current_option_i][:on_select].call(args)
       end
     end

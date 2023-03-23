@@ -16,6 +16,8 @@ def tick(args)
   track_swipe(args) if mobile?
 
   Scene.send("tick_#{args.state.scene}", args)
+  
+  Music.tick(args)
 
   debug_tick(args)
 rescue FinishTick
@@ -36,23 +38,23 @@ def debug_tick(args)
 
 
   if args.inputs.keyboard.key_down.zero
-    play_sfx(args, :select)
+    Sound.play(args, :select)
     args.state.render_debug_details = !args.state.render_debug_details
   end
 
   if args.inputs.keyboard.key_down.i
-    play_sfx(args, :select)
+    Sound.play(args, :select)
     Sprite.reset_all(args)
     args.gtk.notify!("Sprites reloaded")
   end
 
   if args.inputs.keyboard.key_down.r
-    play_sfx(args, :select)
+    Sound.play(args, :select)
     $gtk.reset
   end
 
   if args.inputs.keyboard.key_down.m
-    play_sfx(args, :select)
+    Sound.play(args, :select)
     args.state.simulate_mobile = !args.state.simulate_mobile
     msg = if args.state.simulate_mobile
             "Mobile simulation on"

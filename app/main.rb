@@ -5,15 +5,19 @@ require 'lib/coalesce.rb'
 
 # then, some basic classes required for lists of assets
 require 'app/sprite_instance.rb'
+require 'app/sound_instance.rb'
 
 # then, asset lists
 require 'sprites/_list.rb'
+require 'sounds/_list.rb'
+require 'music/_list.rb'
 
 # then, utility classes
 require 'app/input.rb'
 require 'app/sprite.rb'
 require 'app/util.rb'
 require 'app/sound.rb'
+require 'app/music.rb'
 
 require 'app/constants.rb'
 require 'app/menu.rb'

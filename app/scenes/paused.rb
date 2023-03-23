@@ -28,12 +28,10 @@ module Scene
 
       Menu.tick(args, :paused, options)
 
-      if args.audio[:music] && !args.audio[:music].paused
-        pause_music(args)
-      end
+      Music.pause(args) unless Music.stopped(args)
 
       if secondary_down?(args.inputs)
-        play_sfx(args, :select)
+        Sound.play(args, :select)
         options.find { |o| o[:key] == :resume }[:on_select].call(args)
         
       end

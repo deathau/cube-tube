@@ -9,6 +9,9 @@ Metrics/AbcSize:
 # 10-line methods are /way/ too short
 Metrics/MethodLength:
   Max: 100
+# As are 100 line classes
+Metrics/ClassLength:
+  Max: 1000
 # Yeah, I've got constants with mutables in them. Doesn't bother me.
 Style/MutableConstant:
   Enabled: false

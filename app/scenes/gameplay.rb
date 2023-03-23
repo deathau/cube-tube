@@ -27,7 +27,7 @@ module Scene
     end
 
     def pause(args)
-      play_sfx(args, :select)
+      Sound.play(args, :select)
       return Scene.push(args, :paused, reset: true)
     end
 

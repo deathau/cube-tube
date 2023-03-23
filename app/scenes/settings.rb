@@ -23,7 +23,7 @@ module Scene
           on_select: -> (args) do
             GameSetting.save_after(args) do |args|
               args.state.setting.music = !args.state.setting.music
-              set_music_vol(args)
+              Music.set_volume(args, args.state.setting.music ? 0.8 : 0.0)
             end
           end
         },
@@ -50,7 +50,7 @@ module Scene
       Menu.tick(args, :settings, options)
 
       if secondary_down?(args.inputs)
-        play_sfx(args, :select)
+        Sound.play(args, :select)
         options.find { |o| o[:key] == :back }[:on_select].call(args)
       end
 

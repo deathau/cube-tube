@@ -57,7 +57,7 @@ class CubeTubeGame
     @lines_to_clear = []
     @line_clear_timer = 0
 
-    @music_queue = []
+    @current_music = :music1
 
     reset_game
   end
@@ -87,7 +87,8 @@ class CubeTubeGame
       end
     end
 
-    @music_queue = [:music1, :music2]
+    @current_music = :music1
+    Music.play(@args, @current_music)
   end
 
   def render_grid_border x, y, w, h, color
@@ -257,6 +258,16 @@ class CubeTubeGame
     end
   end
 
+  def change_music
+    if @current_music == :music1
+      @current_music = :music2
+    else
+      @current_music = :music1
+    end
+    queue = Music.queue
+    Music.queue_up(@current_music)
+  end
+
   def plant_current_piece
     rows_to_check = []
 
@@ -288,21 +299,21 @@ class CubeTubeGame
         @lines += 1
         @line_clear_timer = 70
         if (@lines%10).floor == 0
-          @level += 1 
-          @args.audio[:music].looping = false
+          @level += 1
+          change_music
         end
       end
     end
 
     select_next_piece
     if @lines_to_clear.empty?
-      play_sfx(@args, :drop)
+      Sound.play(@args, :drop)
       if current_piece_colliding
         @gameover = true
-        stop_music(@args)
+        Music.stop(@args)
       end
     else
-      play_sfx(@args, :clear)
+      Sound.play(@args, :clear)
       @current_speed = get_speed
     end
 
@@ -330,7 +341,7 @@ class CubeTubeGame
   end
 
   def rotate_current_piece_left
-    play_sfx(@args, :rotate)
+    Sound.play(@args, :rotate)
     @current_piece = @current_piece.transpose.map(&:reverse)
     if(@current_piece_x + @current_piece.length) >= @grid_w
       @current_piece_x = @grid_w - @current_piece.length
@@ -338,7 +349,7 @@ class CubeTubeGame
   end
 
   def rotate_current_piece_right
-    play_sfx(@args, :rotate)
+    Sound.play(@args, :rotate)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
@@ -379,13 +390,8 @@ class CubeTubeGame
       return
     end
 
-    if @args.audio[:music]
-      resume_music(@args) if @args.audio[:music].paused
-      @args.audio[:music].pitch = 1 + (@level * 0.125)
-    else
-      music = @music_queue.shift
-      @music_queue.push music
-      play_music(@args, music)
+    unless Music.stopped(@args)
+      Music.resume(@args) if Music.paused(@args)
     end
 
     if @line_clear_timer.positive?
@@ -401,7 +407,7 @@ class CubeTubeGame
             @grid[i][0] = 0
           end
         end
-        play_sfx(@args, :drop)
+        Sound.play(@args, :drop)
         @lines_to_clear = []
       end
       return
@@ -411,26 +417,26 @@ class CubeTubeGame
       if @current_piece_x > 0
         @current_piece_x -= 1
         if current_piece_colliding
-          play_sfx(@args, :move_deny)
+          Sound.play(@args, :move_deny)
           @current_piece_x += 1
         else
-          play_sfx(@args, :move)
+          Sound.play(@args, :move)
         end
       else
-        play_sfx(@args, :move_deny)
+        Sound.play(@args, :move_deny)
       end
     end
     if k.key_down.up || k.key_down.w || c.key_down.up
       if (@current_piece_x + @current_piece.length) < @grid_w
         @current_piece_x += 1
         if current_piece_colliding
-          play_sfx(@args, :move_deny)
+          Sound.play(@args, :move_deny)
           @current_piece_x -= 1
         else
-          play_sfx(@args, :move)
+          Sound.play(@args, :move)
         end
       else
-        play_sfx(@args, :move_deny)
+        Sound.play(@args, :move_deny)
       end
     end
     if k.key_down.left || k.key_held.left || k.key_down.a || k.key_held.a || c.key_down.left || c.key_held.left
