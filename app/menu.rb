@@ -93,7 +93,7 @@ module Menu
         end
       end
 
-      if primary_down?(args.inputs)
+      if Input.pressed?(args, :primary)
         Sound.play(args, :select)
         options[menu_state.current_option_i][:on_select].call(args)
       end

@@ -13,7 +13,7 @@ module Scene
       end
 
       # auto-pause & input-based pause
-      if !args.state.has_focus || pause_down?(args)
+      if !args.state.has_focus || Input.pressed?(args, :pause)
         return pause(args)
       end
 

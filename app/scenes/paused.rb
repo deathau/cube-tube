@@ -30,7 +30,7 @@ module Scene
 
       Music.pause(args) unless Music.stopped(args)
 
-      if secondary_down?(args.inputs)
+      if Input.pressed?(args, :secondary)
         Sound.play(args, :select)
         options.find { |o| o[:key] == :resume }[:on_select].call(args)
         

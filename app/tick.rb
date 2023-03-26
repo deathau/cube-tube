@@ -1,6 +1,6 @@
 # Code that only gets run once on game start
 def init(args)
-  reset_swipe(args)
+  Input.reset_swipe(args)
   GameSetting.load_settings(args)
 end
 
@@ -13,7 +13,7 @@ def tick(args)
   args.state.has_focus ||= true
   Scene.push(args, :main_menu, reset: true) if !args.state.scene
 
-  track_swipe(args) if mobile?
+  Input.track_swipe(args) if mobile?
 
   Scene.send("tick_#{args.state.scene}", args)
   

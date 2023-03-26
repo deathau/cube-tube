@@ -49,7 +49,7 @@ module Scene
 
       Menu.tick(args, :settings, options)
 
-      if secondary_down?(args.inputs)
+      if Input.pressed?(args, :secondary)
         Sound.play(args, :select)
         options.find { |o| o[:key] == :back }[:on_select].call(args)
       end
