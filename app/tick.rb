@@ -18,7 +18,6 @@ def tick(args)
 
   Input.track_swipe(args) if mobile?
 
-  # Scene.send("tick_#{args.state.scene}", args)
   args.state.scene_stack.each do |scene|
     scene.tick(args) if scene.tick_in_background || scene == args.state.scene_stack.last
   end

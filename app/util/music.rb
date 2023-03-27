@@ -49,15 +49,11 @@ module Music
       queue.each do |channel, value|
         unless value.empty?
           if args.audio["MUSIC_CHANNEL_#{channel}"]
-            puts "THERE'S MUSIC CURRENTLY PLAYING #{args.audio["MUSIC_CHANNEL_#{channel}"]}"
             if args.audio["MUSIC_CHANNEL_#{channel}"].looping
-              puts "CANCEL THE LOOP ON CURRENT MUSIC"
               args.audio["MUSIC_CHANNEL_#{channel}"].looping = false
             end
           else
-            puts "PLAY THAT FUNKY MUSIC! #{value}"
             value.shift.play_music(args, { channel: channel, gain: args.state.setting.music ? 0.8 : 0.0 })
-            puts "Now, the queue is #{value}"
           end
         end
       end

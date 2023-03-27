@@ -8,10 +8,8 @@ class SettingsMenu < MenuScene
         key:       :sfx,
         kind:      :toggle,
         on_select: ->(args) do
-          puts 'toggle sfx'
           GameSetting.save_after(args) do |args|
             args.state.setting.sfx = !args.state.setting.sfx
-            puts "sfx = #{args.state.setting.sfx}"
           end
         end
       },

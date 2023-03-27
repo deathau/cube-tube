@@ -7,8 +7,8 @@
 # SceneInstance
 #
 # The main `#tick` of the game handles delegating to the current scene based on
-# the `args.state.scene` value, which is a symbol of the current scene, ex:
-# `:gameplay`
+# the `args.state.scene_stack` value, which contains the current scene, as well
+# as scenes that can be "popped" back to.
 module Scene
   class << self
     # Change the current scene, and optionally reset the scene that's begin
@@ -19,15 +19,21 @@ module Scene
       args.state.scene_stack ||= []
       # if we're here /not/ from push or pop, clear the scene stack
       args.state.scene_stack.clear unless push_or_pop
-      args.state.scene_stack.push(scene) if args.state.scene_stack.empty?
+      
+      # if `scene` is not a `SceneInstance`, it's probably a symbol representing
+      # the scene we're switching to, so go get it.
+      the_scene = scene.is_a?(SceneInstance) ? scene : SCENES[scene].new(args)
 
-      scene.reset(args) if reset
+      # if the stack is empty (e.g. we just cleared it), then push this scene
+      args.state.scene_stack.push(the_scene) if args.state.scene_stack.empty?
 
-      args.state.scene = scene
+      # if we asked to reset the scene, then do so.
+      the_scene.reset(args) if reset
+
       raise FinishTick, 'finish tick early'
     end
 
-    # Change the current scene and push the previous scene onto the stack
+    # Change the current scene by pushing it onto the scene stack
     def push(args, scene, reset: false)
       args.state.scene_stack ||= []
       the_scene = scene.is_a?(SceneInstance) ? scene : SCENES[scene].new(args)
