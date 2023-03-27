@@ -1,60 +1,74 @@
-module Scene
-  class << self
-    # reachable via main menu or pause menu, allows for configuring the game
-    # for the player's preferences.
-    def tick_settings(args)
-      draw_bg(args, DARK_GREEN)
+# frozen_string_literal: true
 
-      options = [
-        {
-          key: :sfx,
-          kind: :toggle,
-          setting_val: args.state.setting.sfx,
-          on_select: -> (args) do
-            GameSetting.save_after(args) do |args|
-              args.state.setting.sfx = !args.state.setting.sfx
-            end
+# This is the settings menu, allowing for various settings to be changed
+class SettingsMenu < MenuScene
+  def initialize(args, opts = {})
+    menu_options = [
+      {
+        key:       :sfx,
+        kind:      :toggle,
+        on_select: ->(args) do
+          puts 'toggle sfx'
+          GameSetting.save_after(args) do |args|
+            args.state.setting.sfx = !args.state.setting.sfx
+            puts "sfx = #{args.state.setting.sfx}"
           end
-        },
-        {
-          key: :music,
-          kind: :toggle,
-          setting_val: args.state.setting.music,
-          on_select: -> (args) do
-            GameSetting.save_after(args) do |args|
-              args.state.setting.music = !args.state.setting.music
-              Music.set_volume(args, args.state.setting.music ? 0.8 : 0.0)
-            end
+        end
+      },
+      {
+        key:       :music,
+        kind:      :toggle,
+        on_select: ->(args) do
+          GameSetting.save_after(args) do |args|
+            args.state.setting.music = !args.state.setting.music
+            Music.set_volume(args, args.state.setting.music ? 0.8 : 0.0)
           end
-        },
-        {
-          key: :back,
-          on_select: -> (args) { Scene.pop(args) }
-        },
-      ]
+        end
+      },
+      {
+        key:       :back,
+        on_select: ->(iargs) { Scene.pop(iargs) }
+      }
+    ]
 
-      if args.gtk.platform?(:desktop)
-        options.insert(options.length - 1, {
-          key: :fullscreen,
-          kind: :toggle,
-          setting_val: args.state.setting.fullscreen,
-          on_select: -> (args) do
+    if args.gtk.platform?(:desktop)
+      menu_options.insert(
+        menu_options.length - 1,
+        {
+          key:       :fullscreen,
+          kind:      :toggle,
+          on_select: ->(args) do
             GameSetting.save_after(args) do |args|
               args.state.setting.fullscreen = !args.state.setting.fullscreen
               args.gtk.set_window_fullscreen(args.state.setting.fullscreen)
             end
           end
-        })
-      end
-
-      Menu.tick(args, :settings, options)
-
-      if Input.pressed?(args, :secondary)
-        Sound.play(args, :select)
-        options.find { |o| o[:key] == :back }[:on_select].call(args)
-      end
-
-      args.outputs.labels << label(:settings, x: args.grid.w / 2, y: args.grid.top - 200, align: ALIGN_CENTER, size: SIZE_LG, font: FONT_BOLD)
+        }
+      )
     end
+
+    super args, opts, menu_options
+  end
+
+  # called every tick of the game loop
+  def tick(args)
+    draw_bg(args, DARK_GREEN)
+
+    # actual menu logic is handled by the MenuScene super class
+    super
+
+    if Input.pressed?(args, :secondary)
+      Sound.play(args, :select)
+      @menu_options.find { |o| o[:key] == :back }[:on_select].call(args)
+    end
+
+    args.outputs.labels << label(
+      :settings,
+      x:     args.grid.w / 2,
+      y:     args.grid.top - 200,
+      align: ALIGN_CENTER,
+      size:  SIZE_LG,
+      font:  FONT_BOLD
+    )
   end
 end

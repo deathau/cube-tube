@@ -89,6 +89,7 @@ class CubeTubeGame
 
     @current_music = :music1
     Music.play(@args, @current_music)
+    Music.set_volume(args, args.state.setting.music ? 0.8 : 0.0)
   end
 
   def render_grid_border x, y, w, h, color

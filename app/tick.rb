@@ -1,22 +1,28 @@
+# frozen_string_literal: true
+
 # Code that only gets run once on game start
 def init(args)
   Input.reset_swipe(args)
   GameSetting.load_settings(args)
 end
 
+# Code that runs every game tick (mainly just calling other ticks)
 def tick(args)
-  init(args) if args.state.tick_count == 0
-
+  init(args) if args.state.tick_count.zero?
   # this looks good on non 16:9 resolutions; game background is different
   args.outputs.background_color = TRUE_BLACK.values
 
   args.state.has_focus ||= true
-  Scene.push(args, :main_menu, reset: true) if !args.state.scene
+  args.state.scene_stack ||= []
+  Scene.push(args, Scene.default(args), reset: true) if args.state.scene_stack.empty?
 
   Input.track_swipe(args) if mobile?
 
-  Scene.send("tick_#{args.state.scene}", args)
-  
+  # Scene.send("tick_#{args.state.scene}", args)
+  args.state.scene_stack.each do |scene|
+    scene.tick(args) if scene.tick_in_background || scene == args.state.scene_stack.last
+  end
+
   Music.tick(args)
 
   debug_tick(args)
@@ -45,7 +51,7 @@ def debug_tick(args)
   if args.inputs.keyboard.key_down.i
     Sound.play(args, :select)
     Sprite.reset_all(args)
-    args.gtk.notify!("Sprites reloaded")
+    args.gtk.notify!('Sprites reloaded')
   end
 
   if args.inputs.keyboard.key_down.r
@@ -57,9 +63,9 @@ def debug_tick(args)
     Sound.play(args, :select)
     args.state.simulate_mobile = !args.state.simulate_mobile
     msg = if args.state.simulate_mobile
-            "Mobile simulation on"
+            'Mobile simulation on'
           else
-            "Mobile simulation off"
+            'Mobile simulation off'
           end
     args.gtk.notify!(msg)
   end

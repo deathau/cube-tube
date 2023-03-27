@@ -8,7 +8,7 @@ module Sound
     end
 
     def play(args, key, opts = {})
-      SOUNDS.fetch(key).play(args, opts)
+      SOUNDS.fetch(key).play(args, opts) if args.state.setting.sfx
     end
 
     def stop(args, key)

@@ -26,7 +26,7 @@ module Music
     end
 
     def paused(args, channel = 0)
-      args.audio["MUSIC_CHANNEL_#{channel}"].paused
+      args.audio["MUSIC_CHANNEL_#{channel}"].paused unless stopped(args, channel)
     end
 
     def stop(args, channel = 0)
@@ -34,15 +34,15 @@ module Music
     end
 
     def pause(args, channel = 0)
-      args.audio["MUSIC_CHANNEL_#{channel}"].paused = true
+      args.audio["MUSIC_CHANNEL_#{channel}"].paused = true unless stopped(args, channel)
     end
 
     def resume(args, channel = 0)
-      args.audio["MUSIC_CHANNEL_#{channel}"].paused = false
+      args.audio["MUSIC_CHANNEL_#{channel}"].paused = false unless stopped(args, channel)
     end
 
     def set_volume(args, volume, channel = 0)
-      args.audio["MUSIC_CHANNEL_#{channel}"].gain = volume
+      args.audio["MUSIC_CHANNEL_#{channel}"].gain = volume unless stopped(args, channel)
     end
 
     def tick(args)
