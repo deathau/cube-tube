@@ -55,11 +55,6 @@ class SettingsMenu < MenuScene
     # actual menu logic is handled by the MenuScene super class
     super
 
-    if Input.pressed?(args, :secondary)
-      Sound.play(args, :select)
-      @menu_options.find { |o| o[:key] == :back }[:on_select].call(args)
-    end
-
     args.outputs.labels << label(
       :settings,
       x:     args.grid.w / 2,

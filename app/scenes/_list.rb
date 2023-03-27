@@ -5,7 +5,7 @@ module Scene
     DEFAULT:   MainMenu,
     main_menu: MainMenu,
     settings:  SettingsMenu,
-    #paused:    PauseMenu,
-    #cube_tube: CubeTube
+    paused:    PauseMenu,
+    cube_tube: CubeTubeGame
   }
 end
