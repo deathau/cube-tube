@@ -4,10 +4,11 @@ module Sprite
   # annoying to track but useful for reloading with +i+ in debug mode; would be
   # nice to define a different way
   SPRITES = {
-    train:      SpriteInstance.new({ w: 1597, h: 540, path: 'sprites/train-1.png' }),
-    train_fore: SpriteInstance.new({ w: 1597, h: 540, path: 'sprites/train-2.png' }),
+    train:      SpriteInstance.new({ w: 1894, h: 473, path: 'sprites/train.png' }),
+    train_fore: SpriteInstance.new({ w: 1894, h: 473, path: 'sprites/train-fore.png' }),
     screen:     SpriteInstance.new({ w: 250,  h: 210, path: 'sprites/screen.png' }),
     tunnel:     SpriteInstance.new({ w: 267,  h: 144, path: 'sprites/tunnel.png' }),
+    tracks:     SpriteInstance.new({ w: 267,  h: 144, path: 'sprites/tracks.png' }),
     pause:      SpriteInstance.new({ w: 16,   h: 16,  path: 'sprites/pause.png' }),
     gray:       SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/gray.png' }),
     black:      SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/black.png' }),

@@ -4,7 +4,7 @@
 module Sprite
   class << self
     def reset_all(args)
-      SPRITES.each { |_, v| args.gtk.reset_sprite(v) }
+      SPRITES.each { |_, v| args.gtk.reset_sprite(v.path) }
     end
 
     def for(key)

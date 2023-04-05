@@ -10,14 +10,14 @@ class CubeTubeGame < GameplayScene
     @blocksize = 30
     @grid_w = 10
     @grid_h = 20
-    @grid_x = 115
-    @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) + 143
+    @grid_x = 180
+    @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) - 21
     @start_grid_x = @grid_x
     @start_grid_y = @grid_y
     @bg_x = 0
     @bg_w = 1335
 
-    @next_piece_box = [2, -9.5, 7, 7]
+    @next_piece_box = [2, -9, 7, 7]
 
     @sprite_index = [
       Sprite.for(:black),
@@ -68,11 +68,15 @@ class CubeTubeGame < GameplayScene
     Sprite.for(:tunnel).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
     Sprite.for(:tunnel).render(@args, { x: @bg_x - @bg_w, y: 0, w: @bg_w, h: 720 })
 
-    Sprite.for(:train).render(@args, { x: 0, y: @grid_x - 64 })
+    # @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) - 21
+    Sprite.for(:train).render(@args, { x: 0, y: @grid_x - 140.75 })
   end
 
   def render_foreground
-    Sprite.for(:train_fore).render(@args, { x: 0, y: @grid_x - 64 })
+    Sprite.for(:tracks).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
+    Sprite.for(:tracks).render(@args, { x: @bg_x - @bg_w, y: 0, w: @bg_w, h: 720 })
+
+    Sprite.for(:train_fore).render(@args, { x: 0, y: @grid_x - 140.75 })
   end
 
   # x and y are positions in the grid, not pixels
@@ -111,7 +115,7 @@ class CubeTubeGame < GameplayScene
   end
 
   def render_next_piece
-    screen_x = @grid_y + 400
+    screen_x = @grid_y + 705
     screen_y = @grid_x + 80
     screen_w = 250
     screen_h = 200
@@ -166,7 +170,7 @@ class CubeTubeGame < GameplayScene
       (0..@current_piece[x].length - 1).each do |y|
         next if @current_piece[x][y].zero?
         if (@current_piece_y + y >= @grid_h) ||
-           ((@current_piece_y + y) >= 0 && @grid[@current_piece_x + x][@current_piece_y + y] != 0)
+            ((@current_piece_y + y) >= 0 && @grid[@current_piece_x + x][@current_piece_y + y] != 0)
           return true
         end
       end
