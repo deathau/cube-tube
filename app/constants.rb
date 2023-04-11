@@ -26,7 +26,7 @@ ORANGE = { r: 255, g: 173, b: 31 }
 PINK = { r: 245, g: 146, b:  198 }
 PURPLE = { r: 133, g: 42, b: 216 }
 RED = { r: 231, g: 89, b: 82 }
-YELLOW = { r: 240, g: 232, b: 89 }
+YELLOW = { r: 255, g: 200, b: 5 }
 
 DARK_BLUE = { r: 22, g: 122, b: 188 }
 DARK_GREEN = { r: 5, g: 84, b: 12 }

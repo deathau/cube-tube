@@ -16,10 +16,11 @@ TEXT = {
   paused: "Paused",
   quit: "Quit",
   resume: "Resume",
-  return_to_main_menu: "Return to Main Menu",
+  return_to_main_menu: "Main Menu",
   settings: "Settings",
   sfx: "Sound Effects",
   start: "Start",
+  cube_tube: "Cube tube",
 }
 
 # Gets the text for the passed in `key`. Raises if it does not exist. We don't
@@ -31,12 +32,15 @@ end
 SIZE_XS = 0
 SIZE_SM = 4
 SIZE_MD = 6
-SIZE_LG = 10
+SIZE_LG = 14
 
 FONT_REGULAR = "fonts/Atkinson-Hyperlegible-Regular-102.ttf"
 FONT_ITALIC = "fonts/Atkinson-Hyperlegible-Italic-102.ttf"
 FONT_BOLD = "fonts/Atkinson-Hyperlegible-Bold-102.ttf"
 FONT_BOLD_ITALIC = "fonts/Atkinson-Hyperlegible-BoldItalic-102.ttf"
+FONT_DOTMATRIX = "fonts/DotMatrix.ttf"
+FONT_DOTMATRIX_BOLD = "fonts/DotMatrix-Bold.ttf"
+FONT_RUBIK_BLACK = "fonts/Rubik-Black.ttf"
 
 # Friendly method with sensible defaults for creating DRGTK label data
 # structures.

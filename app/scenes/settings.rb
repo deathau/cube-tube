@@ -45,7 +45,7 @@ class SettingsMenu < MenuScene
       )
     end
 
-    super args, opts, menu_options
+    super args, opts, :settings, menu_options
   end
 
   # called every tick of the game loop
@@ -54,14 +54,5 @@ class SettingsMenu < MenuScene
 
     # actual menu logic is handled by the MenuScene super class
     super
-
-    args.outputs.labels << label(
-      :settings,
-      x:     args.grid.w / 2,
-      y:     args.grid.top - 200,
-      align: ALIGN_CENTER,
-      size:  SIZE_LG,
-      font:  FONT_BOLD
-    )
   end
 end
