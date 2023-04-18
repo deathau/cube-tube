@@ -22,6 +22,10 @@ class Intro < GameplayScene
 
   # called every tick of the game loop
   def tick(args)
+    if Input.pressed?(args, :primary)
+      Scene.switch(args, :cube_tube, reset: true)
+    end
+
     @start ||= args.state.tick_count
     case @state
     when 0

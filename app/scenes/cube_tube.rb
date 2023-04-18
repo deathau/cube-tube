@@ -62,7 +62,13 @@ class CubeTubeGame < GameplayScene
       0, 0, 0
     ]
 
-    @bg_x += (@level + 2) * 2 unless @gameover
+    if @gameover
+      @gameover_tick = @args.state.tick_count if @gameover_tick == 0
+      ease = 1.0 - @args.easing.ease(@gameover_tick, @args.state.tick_count, 60, :quad)
+      @bg_x += (@level + 5) * ease
+    else
+      @bg_x += @level + 5 unless @gameover
+    end
     @bg_x %= @bg_w if @bg_x >= @bg_w
 
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
@@ -128,7 +134,15 @@ class CubeTubeGame < GameplayScene
 
     render_piece next_piece, @next_piece_box[0] + centerx, @next_piece_box[1] + centery
 
-    @args.outputs.labels << [screen_x + 33, screen_y + screen_h - 8, 'Next piece', 8, 255, 255, 255, 255 ]
+    @args.outputs.labels << label(
+      'Next piece',
+      x:     screen_x + (screen_w / 2),
+      y:     screen_y + screen_h - 10,
+      align: ALIGN_CENTER,
+      size:  8,
+      font:  FONT_DOTMATRIX,
+      color: YELLOW
+    )
 
     screen_s =
       case (@args.state.tick_count % 32)
@@ -142,8 +156,24 @@ class CubeTubeGame < GameplayScene
   end
 
   def render_score
-    @args.outputs.labels << [200, 600, "Lines: #{@lines}", 10, 255, 255, 255, 255]
-    @args.outputs.labels << [400, 600, "Level: #{@level}", 10, 255, 255, 255, 255]
+    @args.outputs.labels << label(
+      "Lines: #{@lines}",
+      x:     65,
+      y:     @grid_x + 215,
+      size:  10,
+      color: YELLOW,
+      font:  FONT_DOTMATRIX
+    )
+    @args.outputs.labels << label(
+      "Level: #{@level}",
+      x:     60,
+      y:     @grid_x + 165,
+      size:  10,
+      color: YELLOW,
+      font:  FONT_DOTMATRIX
+    )
+    #  [200, 600, "Lines: #{@lines}", 10, 255, 255, 255, 255]
+    # @args.outputs.labels << [400, 600, "Level: #{@level}", 10, 255, 255, 255, 255]
   end
 
   def render_gameover
@@ -358,6 +388,11 @@ class CubeTubeGame < GameplayScene
     @next_move -= @current_speed / 3 if Input.pressed_or_held?(@args, :left)
     rotate_current_piece_left if Input.pressed?(@args, :rotate_left)
     rotate_current_piece_right if Input.pressed?(@args, :rotate_right)
+
+    if @args.inputs.keyboard.key_down.equal_sign
+      @level += 1
+      @lines += 10
+    end
   end
 
   # train bounce effect
@@ -420,6 +455,7 @@ class CubeTubeGame < GameplayScene
     @next_move = @current_speed
     @gameover = false
     @showgameover = false
+    @gameover_tick = 0
 
     @current_piece_x = 4
     @current_piece_y = -1
