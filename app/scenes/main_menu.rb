@@ -7,7 +7,7 @@ class MainMenu < MenuScene
     menu_options = [
       {
         key:       :start,
-        on_select: ->(iargs) { Scene.switch(iargs, :cube_tube, reset: true) }
+        on_select: ->(iargs) { Scene.switch(iargs, :intro, reset: true) }
       },
       {
         key:       :settings,

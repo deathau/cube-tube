@@ -6,6 +6,7 @@ module Scene
     main_menu: MainMenu,
     settings:  SettingsMenu,
     paused:    PauseMenu,
-    cube_tube: CubeTubeGame
+    cube_tube: CubeTubeGame,
+    intro:     Intro
   }
 end

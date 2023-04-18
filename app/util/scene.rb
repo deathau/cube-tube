@@ -36,7 +36,7 @@ module Scene
       # if we asked to reset the scene, then do so.
       the_scene.reset(args) if reset
 
-      raise FinishTick, 'finish tick early'
+      # raise FinishTick, 'finish tick early'
     end
 
     # Change the current scene by pushing it onto the scene stack

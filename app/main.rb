@@ -34,6 +34,7 @@ require 'app/scenes/main_menu.rb'
 require 'app/scenes/paused.rb'
 require 'app/scenes/settings.rb'
 require 'app/scenes/cube_tube.rb'
+require 'app/scenes/intro.rb'
 
 require 'app/scenes/_list.rb'
 require 'app/util/scene.rb'
