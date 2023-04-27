@@ -101,8 +101,13 @@ class CubeTubeGame < GameplayScene
   def render_grid
     (0..@grid_w - 1).each do |x|
       (0..@grid_h - 1).each do |y|
-        if @grid[x][y] != 0 && (!@lines_to_clear.include?(y) || (@line_clear_timer % 14) < 7)
-          render_block(x, y, @grid[x][y])
+        if @grid[x][y] != 0
+          render_block(x, y, @grid[x][y]) if !@lines_to_clear.include?(y) || (@line_clear_timer % 14) < 7
+        elsif (x - @current_piece_x).between?(0, @current_piece.length - 1) &&
+              (y - @current_piece_y).between?(0, @current_piece[x - @current_piece_x].length - 1) &&
+              !@current_piece[x - @current_piece_x][y - @current_piece_y].zero?
+          # render the current piece
+          render_block(x, y, @current_piece[x - @current_piece_x][y - @current_piece_y])
         end
       end
     end
@@ -114,10 +119,6 @@ class CubeTubeGame < GameplayScene
         render_block(piece_x + x, piece_y + y, piece[x][y]) if piece[x][y] != 0
       end
     end
-  end
-
-  def render_current_piece
-    render_piece(@current_piece, @current_piece_x, @current_piece_y) if @line_clear_timer <= 0
   end
 
   def render_next_piece
@@ -184,7 +185,6 @@ class CubeTubeGame < GameplayScene
   def render
     render_background
     render_next_piece
-    render_current_piece
     render_grid
     render_foreground
     render_score
