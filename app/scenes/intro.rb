@@ -5,7 +5,7 @@ class Intro < GameplayScene
   def initialize(args, opts = {})
     super
 
-    @train_duration = 200
+    @train_duration = 190
     @train_spline = [
       [1.0, 0.25, 0, 0]
     ]
@@ -26,26 +26,34 @@ class Intro < GameplayScene
       Scene.switch(args, :cube_tube, reset: true)
     end
 
-    @start ||= args.state.tick_count
+    now = args.state.tick_count
+
+    if @start.zero? || @start.nil?
+      @start = now
+      Sound.play(args, :train_stop)
+    end
+
     case @state
     when 0
-      if (args.state.tick_count - @start) > 60
-        @train_start = args.state.tick_count
+      if (now - @start) > 60
+        @train_start = now
         @state += 1
       end
     when 1
-      @train_pos = 1280 * args.easing.ease_spline(@train_start, args.state.tick_count, @train_duration, @train_spline)
+      @train_pos = 1280 * args.easing.ease_spline(@train_start, now, @train_duration, @train_spline)
       if @train_pos <= 0
         @state += 1
-        @wait_start = args.state.tick_count
+        @wait_start = now
+        Sound.play(args, :chime)
       end
     when 2
-      if (args.state.tick_count - @wait_start) > 60
-        @leave_start = args.state.tick_count
+      if (now - @wait_start) > 60
+        @leave_start = now
         @state += 1
+        Sound.play(args, :train_leave)
       end
     when 3
-      ease =  args.easing.ease_spline(@leave_start, args.state.tick_count, @leave_duration, @leave_spline)
+      ease = args.easing.ease_spline(@leave_start, now, @leave_duration, @leave_spline)
       @station_pos = @full_station_start_w * ease
 
       @screen_on = true if ease > 0.75
@@ -64,7 +72,7 @@ class Intro < GameplayScene
 
     if @screen_on
       screen_s =
-        case (args.state.tick_count % 32)
+        case (now % 32)
         when 0..7 then :screen_s1
         when 8..15 then :screen_s2
         when 16..23 then :screen_s3

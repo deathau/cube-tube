@@ -269,6 +269,7 @@ class CubeTubeGame < GameplayScene
       Sound.play(@args, :drop)
       if current_piece_colliding
         @gameover = true
+        Sound.play(@args, :train_stop2)
         Music.stop(@args)
       end
     else

@@ -30,6 +30,16 @@ class MainMenu < MenuScene
     # actual menu logic is handled by the MenuScene super class
     super
 
+    Music.play(args, :ambience) if args.state.setting.music && Music.stopped(args)
+    @next_announcement ||= 0
+    if @next_announcement <= args.state.tick_count
+      next_sec = random(20..50)
+      @next_announcement = args.state.tick_count + (next_sec * 60)
+      sound = :"ambient#{random(1..6)}"
+      puts sound, Sound.for(sound).input
+      Sound.play(args, sound)
+    end
+
     # additionally draw some labels with information about the game
     labels = []
     labels << label(

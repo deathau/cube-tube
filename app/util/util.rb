@@ -3,9 +3,19 @@
 
 # returns random val between min & max, inclusive
 # needs integers, use rand if you don't need min/max and don't care much
-def random(min, max)
-  min = Integer(min)
-  max = Integer(max)
+def random(a, b = nil)
+  min = 0
+  max = 1
+  if a.is_a?(Range)
+    min = a.begin
+    max = a.last(1)[0]
+  elsif a.is_a?(Numeric) && b.is_a?(Numeric)
+    min = Integer(a)
+    max = Integer(b)
+  else
+    min = 0
+    max = a
+  end
   rand((max + 1) - min) + min
 end
 
