@@ -30,7 +30,7 @@ class MainMenu < MenuScene
     # actual menu logic is handled by the MenuScene super class
     super
 
-    Music.play(args, :ambience) if args.state.setting.music && Music.stopped(args)
+    Music.play(args, :ambience) if args.state.setting.music && Music.stopped?(args)
     @next_announcement ||= 0
     if @next_announcement <= args.state.tick_count
       next_sec = random(20..50)

@@ -9,6 +9,9 @@ end
 # Code that runs every game tick (mainly just calling other ticks)
 def tick(args)
   init(args) if args.state.tick_count.zero?
+
+  Music.tick(args)
+  
   # this looks good on non 16:9 resolutions; game background is different
   args.outputs.background_color = TRUE_BLACK.values
 
@@ -21,8 +24,6 @@ def tick(args)
   args.state.scene_stack.each do |scene|
     scene.tick(args) if scene.tick_in_background || scene == args.state.scene_stack.last
   end
-
-  Music.tick(args)
 
   debug_tick(args)
 rescue FinishTick

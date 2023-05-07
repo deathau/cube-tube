@@ -16,14 +16,14 @@ icon=metadata/icon.png
 # compile_ruby=false
 
 # Uncomment the entry below to specify the package name for your APK
-# packageid=org.dev.gamename
+packageid=au.death.cubetube
 
 # Setting this property to true will enable High DPI rendering (try in combination with scale_quality to see what looks best)
 # highdpi=false
 
 # === Portrait Mode ===
 # The orientation can be set to either landscape (1280x720) or portrait (720x1280)
-# orientation=landscape
+orientation=landscape
 
 # === HD Mode ===
 

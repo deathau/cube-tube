@@ -21,13 +21,13 @@ class CubeTubeGame < GameplayScene
 
     @sprite_index = [
       Sprite.for(:black),
-      Sprite.for(:red),
-      Sprite.for(:green),
+      Sprite.for(:cyan),
       Sprite.for(:blue),
-      Sprite.for(:yellow),
-      Sprite.for(:indigo),
-      Sprite.for(:violet),
       Sprite.for(:orange),
+      Sprite.for(:yellow),
+      Sprite.for(:green),
+      Sprite.for(:violet),
+      Sprite.for(:red),
       Sprite.for(:gray)
     ]
 
@@ -43,11 +43,63 @@ class CubeTubeGame < GameplayScene
     @current_piece_x = 0
     @current_piece_y = 0
     @current_piece = nil
+    @current_piece_rotation = 0
     @next_piece = nil
     @lines_to_clear = []
     @line_clear_timer = 0
+    @lock_delay = 30
+    @lock_timer = 0
 
-    @current_music = :music1
+    @current_song = 0
+    @current_song_progress = 0
+
+    @cursor_down = nil
+    @cursor_down_tick = nil
+    @cursor_piece_x_origin = nil
+    @cursor_piece_y_origin = nil
+
+    # wall kick tests taken from https://tetris.fandom.com/wiki/SRS#Wall_Kicks
+    @wall_kick_tests = {
+      [0, 1] => [[-1, 0], [-1, 1], [0, -2], [-1, -2]],
+      [1, 0] => [[1, 0], [1, -1], [0, 2], [1, 2]],
+      [1, 2] => [[1, 0], [1, -1], [0, 2], [1, 2]],
+      [2, 1] => [[-1, 0], [-1, 1], [0, -2], [-1, -2]],
+      [2, 3] => [[1, 0], [1, 1], [0, -2], [1, -2]],
+      [3, 2] => [[-1, 0], [-1, -1], [0, 2], [-1, 2]],
+      [3, 0] => [[-1, 0], [-1, -1], [0, 2], [-1, 2]],
+      [0, 3] => [[1, 0], [1, 1], [0, -2], [1, -2]],
+    }
+
+    @wall_kick_tests_i = {
+      [0, 1] => [[-2, 0], [1, 0], [-2, -1], [1, 2]],
+      [1, 0] => [[2, 0], [-1, 0], [2, 1], [-1, -2]],
+      [1, 2] => [[-1, 0], [2, 0], [-1, 2], [2, -1]],
+      [2, 1] => [[1, 0], [-2, 0], [1, -2], [-2, 1]],
+      [2, 3] => [[2, 0], [-1, 0], [2, 1], [-1, -2]],
+      [3, 2] => [[-2, 0], [1, 0], [-2, -1], [1, 2]],
+      [3, 0] => [[1, 0], [-2, 0], [1, -2], [-2, 1]],
+      [0, 3] => [[-1, 0], [2, 0], [-1, 2], [2, -1]],
+    }
+
+    @song = [
+      [
+        [:underscore_b, :underscore2_a, :underscore2_b, :underscore_bridge1, :underscore_bridge2_a, :underscore_b, :underscore_a],
+        [:silent_bar,   :silent_bar,    :silent_bar,    :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar],
+      ],[
+        [:lead_beats,   :lead_beats,   :lead_beats,    :lead_beats,    :silent_bar, :silent_bar, :silent_bar, :silent_bar, :lead_beats, :lead_beats],
+        [:underscore_a, :underscore_b, :underscore2_a, :underscore2_b, :underscore_bridge1, nil, :underscore_bridge2_a, nil, nil,     :underscore_b]
+      ],[
+        [:fill1, :fill1, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar],
+        [nil,    nil,    :lead1,      nil,         nil,         nil,         :lead2,      nil,         nil,         nil]
+      ],[
+        [:silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar],
+        [:post_lead,  nil,         :post_lead2, nil,         :loop1_a,    :loop1_b,    :loop1_a,    :loop1_b,    :loop2_a,    :loop2_b,    :loop2_a,    :loop2_b],
+
+      ],[
+        [:fill1, :fill1, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar, :silent_bar],
+        [nil,    nil,    :lead1,      nil,         nil,         nil,         :lead2,      nil,         nil,         nil,         :post_lead,  nil,         :post_lead2, nil,         :loop1_a,    :loop1_b,    :loop1_a,    :loop1_b,    :loop2_a,    :loop2_b,    :loop2_a,    :loop2_b]
+      ]
+    ]
 
     reset(args)
   end
@@ -107,7 +159,7 @@ class CubeTubeGame < GameplayScene
               (y - @current_piece_y).between?(0, @current_piece[x - @current_piece_x].length - 1) &&
               !@current_piece[x - @current_piece_x][y - @current_piece_y].zero?
           # render the current piece
-          render_block(x, y, @current_piece[x - @current_piece_x][y - @current_piece_y])
+          render_block(x, y, @current_piece[x - @current_piece_x][y - @current_piece_y]) if @lines_to_clear.empty?
         end
       end
     end
@@ -191,17 +243,33 @@ class CubeTubeGame < GameplayScene
     render_gameover if @showgameover
   end
 
-  def current_piece_colliding
-    (0..@current_piece.length - 1).each do |x|
-      (0..@current_piece[x].length - 1).each do |y|
-        next if @current_piece[x][y].zero?
-        if (@current_piece_y + y >= @grid_h) ||
-            ((@current_piece_y + y) >= 0 && @grid[@current_piece_x + x][@current_piece_y + y] != 0)
+  def piece_colliding(piece, piece_x, piece_y)
+    return true if (piece_x + piece.length) > @grid_w || piece_x < 0
+
+    (0..piece.length - 1).each do |x|
+      (0..piece[x].length - 1).each do |y|
+        next if piece[x][y].zero?
+        if (piece_y + y >= @grid_h) ||
+           ((piece_y + y) >= 0 && @grid[piece_x + x][piece_y + y] != 0)
           return true
         end
       end
     end
     false
+  end
+
+  def current_piece_colliding
+    piece_colliding(@current_piece, @current_piece_x, @current_piece_y)
+    # (0..@current_piece.length - 1).each do |x|
+    #   (0..@current_piece[x].length - 1).each do |y|
+    #     next if @current_piece[x][y].zero?
+    #     if (@current_piece_y + y >= @grid_h) ||
+    #         ((@current_piece_y + y) >= 0 && @grid[@current_piece_x + x][@current_piece_y + y] != 0)
+    #       return true
+    #     end
+    #   end
+    # end
+    # false
   end
 
   def get_speed
@@ -228,8 +296,19 @@ class CubeTubeGame < GameplayScene
   end
 
   def change_music
-    @current_music = @current_music == :music1 ? :music2 : :music1
-    Music.queue_up(@current_music)
+    @current_song = (@current_song + 1) % @song.length
+    @current_song_progress = 0
+    
+    case @level
+    when 5
+      Music.queue_up(:bridge)
+    when 10
+      Music.queue_up(:bridge)
+    when 15
+      Music.queue_up(:bridge)
+    when 20 
+      Music.queue_up(:bridge)
+    end
   end
 
   def line_full?(row)
@@ -240,6 +319,13 @@ class CubeTubeGame < GameplayScene
   end
 
   def plant_current_piece
+    @lock_timer -= 1
+    return unless @lock_timer <= 0
+
+    @cursor_down = nil
+    @cursor_piece_x_origin = nil
+    @cursor_piece_y_origin = nil
+
     (0..@current_piece.length - 1).each do |x|
       (0..@current_piece[x].length - 1).each do |y|
         next if @current_piece[x][y].zero?
@@ -260,7 +346,8 @@ class CubeTubeGame < GameplayScene
       @line_clear_timer = 70
       if (@lines % 10).floor.zero?
         @level += 1
-        change_music
+        change_music()
+        Sound.play(@args, :horn)
       end
     end
 
@@ -274,6 +361,7 @@ class CubeTubeGame < GameplayScene
       end
     else
       Sound.play(@args, :clear)
+      Sound.play(@args, :fourlines) if @lines_to_clear.length == 4
       @current_speed = get_speed
     end
 
@@ -285,32 +373,70 @@ class CubeTubeGame < GameplayScene
 
     @current_piece_x = 4
     @current_piece_y = -1
+    @current_piece_rotation = 0
+    @lock_timer = @lock_delay
 
     r = (rand 7) + 1
     @next_piece =
       case r
-      when 1 then [[r, 0], [r, r], [0, r]]
-      when 2 then [[0, r], [r, r], [r, 0]]
-      when 3 then [[r, r, r], [r, 0, 0]]
-      when 4 then [[r, r], [r, r] ]
-      when 5 then [[r], [r], [r], [r]]
-      when 6 then [[r, 0], [r, r], [r, 0]]
-      when 7 then [[r, 0, 0], [r, r, r]]
+      when 1 then [[r], [r], [r], [r]]     # I
+      when 2 then [[0, r], [0, r], [r, r]] # J
+      when 3 then [[r, r], [0, r], [0, r]] # L
+      when 4 then [[r, r], [r, r]]         # O
+      when 5 then [[r, 0], [r, r], [0, r]] # S
+      when 6 then [[0, r], [r, r], [0, r]] # T
+      when 7 then [[0, r], [r, r], [r, 0]] # Z
       end
     select_next_piece if @current_piece.nil?
   end
 
+  def wall_kick(new_piece, old_rotation, new_rotation)
+    is_i = new_piece.length == 1 || (new_piece.length == 4 && new_piece[0].length == 1)
+    
+    kick_test_set = is_i ? @wall_kick_tests_i : @wall_kick_tests
+    kick_test = kick_test_set[[old_rotation, new_rotation]]
+    kick_test.each do |t|
+      collide = piece_colliding(new_piece, @current_piece_x + t[0], @current_piece_y + t[1])
+      next if collide
+
+      @current_piece_x += t[0]
+      @current_piece_y += t[1]
+      return true
+    end
+    false
+  end
+
+  def rotate_current_piece(new_piece, new_rotation)
+    should_rotate = false
+    if piece_colliding(new_piece, @current_piece_x, @current_piece_y)
+      should_rotate = wall_kick(new_piece, @current_piece_rotation, new_rotation)
+    else
+      should_rotate = true
+    end
+
+    if should_rotate
+      @lock_timer = @lock_delay
+      @current_piece_rotation = new_rotation
+      @current_piece = new_piece
+      Sound.play(@args, :rotate)
+    else
+      # wall kick failed. Don't do the rotation
+      Sound.play(@args, :move_deny)
+    end
+  end
+
   def rotate_current_piece_left
-    Sound.play(@args, :rotate)
-    @current_piece = @current_piece.transpose.map(&:reverse)
-    @current_piece_x = @grid_w - @current_piece.length if (@current_piece_x + @current_piece.length) >= @grid_w
+    new_piece = @current_piece.transpose.map(&:reverse)
+    new_rotation = (@current_piece_rotation - 1) % 4
+    rotate_current_piece(new_piece, new_rotation)
   end
 
   def rotate_current_piece_right
-    Sound.play(@args, :rotate)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
     @current_piece = @current_piece.transpose.map(&:reverse)
+    new_rotation = (@current_piece_rotation + 1) % 4
+    rotate_current_piece(new_piece, new_rotation)
   end
 
   def fill_grid
@@ -339,6 +465,7 @@ class CubeTubeGame < GameplayScene
         @current_piece_x -= 1
       else
         Sound.play(@args, :move)
+        @lock_timer = @lock_delay
       end
     else
       Sound.play(@args, :move_deny)
@@ -353,6 +480,7 @@ class CubeTubeGame < GameplayScene
         @current_piece_x += 1
       else
         Sound.play(@args, :move)
+        @lock_timer = @lock_delay
       end
     else
       Sound.play(@args, :move_deny)
@@ -376,6 +504,7 @@ class CubeTubeGame < GameplayScene
       end
     end
     Sound.play(@args, :drop)
+    @lock_timer = @lock_delay
     @lines_to_clear = []
     false
   end
@@ -384,15 +513,70 @@ class CubeTubeGame < GameplayScene
     restart_game if Input.pressed?(@args, :primary) && @gameover && @showgameover
     return if @gameover
 
-    move_current_piece_down if Input.pressed?(@args, :down)
-    move_current_piece_up if Input.pressed?(@args, :up)
-    @next_move -= @current_speed / 3 if Input.pressed_or_held?(@args, :left)
-    rotate_current_piece_left if Input.pressed?(@args, :rotate_left)
-    rotate_current_piece_right if Input.pressed?(@args, :rotate_right)
+    if @lines_to_clear.empty?
+      move_current_piece_down if Input.pressed?(@args, :down)
+      move_current_piece_up if Input.pressed?(@args, :up)
+      if Input.pressed_or_held?(@args, :left)
+        @next_move -= @current_speed / 3
+        @lock_timer -= @current_speed / 3 if @lock_timer > 0
+      end
+      rotate_current_piece_left if Input.pressed?(@args, :rotate_left)
+      rotate_current_piece_right if Input.pressed?(@args, :rotate_right)
+
+      if @args.inputs.mouse.button_left || @args.inputs.finger_one
+        if @cursor_down.nil?
+          @cursor_down = @args.inputs.mouse.button_left ? @args.inputs.mouse.point : @args.inputs.finger_one
+          @cursor_down_tick = @args.state.tick_count
+          @cursor_piece_x_origin = @current_piece_x
+          @cursor_piece_y_origin = @current_piece_y
+        end
+
+        cursor = @args.inputs.mouse.button_left ? @args.inputs.mouse.point : @args.inputs.finger_one
+
+        delta_x = cursor.x - @cursor_down.x
+        if delta_x.negative? && delta_x.abs > (@blocksize * 2) && @cursor_piece_x_origin == @current_piece_x
+          @next_move -= @current_speed / 3
+          @lock_timer -= @current_speed / 3 if @lock_timer.positive?
+          return
+        end
+
+        delta_y = cursor.y - @cursor_down.y
+        delta_block = (delta_y / @blocksize).floor
+        max_delta = 0
+        if delta_block.negative?
+          @cursor_piece_x_origin.downto((@cursor_piece_x_origin + delta_block)) do |i|
+            break if piece_colliding(@current_piece, i, @current_piece_y)
+
+            max_delta = i
+          end
+        else
+          @cursor_piece_x_origin.upto((@cursor_piece_x_origin + delta_block)) do |i|
+            break if piece_colliding(@current_piece, i, @current_piece_y)
+
+            max_delta = i
+          end
+        end
+        @current_piece_x = max_delta
+      else
+        if !@cursor_down.nil? && (@cursor_down_tick + 30) >= @args.state.tick_count && @cursor_piece_x_origin == @current_piece_x
+          rotate_current_piece_left
+        end
+        @cursor_down = nil
+        @cursor_down_tick = nil
+        @cursor_piece_x_origin = nil
+        @cursor_piece_y_origin = nil
+      end
+
+      if @args.inputs.mouse.click
+        rotate_current_piece_left if @cursor_piece_x_origin.nil?
+      end
+    end
 
     if @args.inputs.keyboard.key_down.equal_sign
       @level += 1
       @lines += 10
+      change_music()
+      Sound.play(@args, :horn)
     end
   end
 
@@ -411,13 +595,29 @@ class CubeTubeGame < GameplayScene
     @next_move -= 1
     return unless @next_move <= 0
 
-    @next_move = @current_speed
     @current_piece_y += 1
 
-    return unless current_piece_colliding
+    if current_piece_colliding
+      @current_piece_y -= 1
+      plant_current_piece
+    else
+      @lock_timer = @lock_delay
+      @next_move = @current_speed
+    end
+  end
 
-    @current_piece_y -= 1
-    plant_current_piece
+  def iterate_music
+    Music.resume(@args) if !Music.stopped?(@args) && Music.paused?(@args)
+    return unless Music.stopped?(@args, 0) && (!Music.queue[0] || Music.queue[0].empty?)
+
+    song_length = @song[@current_song][0].length
+    @current_song_progress = @current_song_progress % song_length # just in case we changed to a shorter song
+    @song[@current_song].each_with_index do |track, i|
+      if @current_song_progress < track.length && !track[@current_song_progress].nil?
+        Music.play(@args, track[@current_song_progress], { channel: i })
+      end
+    end
+    @current_song_progress = (@current_song_progress + 1) % song_length
   end
 
   def iterate
@@ -428,8 +628,7 @@ class CubeTubeGame < GameplayScene
     # skip the rest if it's game over
     return if @gameover
 
-    # resume music if it's paused
-    Music.resume(@args) if !Music.stopped(@args) && Music.paused(@args)
+    iterate_music
 
     iterate_train_bounce
 
@@ -461,6 +660,7 @@ class CubeTubeGame < GameplayScene
     @current_piece_x = 4
     @current_piece_y = -1
     @current_piece = nil
+    @current_piece_rotation = 0
     @next_piece = nil
     select_next_piece
     @lines_to_clear = []
@@ -475,8 +675,10 @@ class CubeTubeGame < GameplayScene
       end
     end
 
-    @current_music = :music1
-    Music.play(args, @current_music)
-    Music.set_volume(args, args.state.setting.music ? 0.8 : 0.0)
+    @current_song = 0
+    @current_song_progress = 0
+    Music.stop(args)
+    Music.set_volume(args, args.state.setting.music ? 0.6 : 0.0)
+    Music.play(args, :underscore_a)
   end
 end

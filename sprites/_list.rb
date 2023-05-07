@@ -15,6 +15,7 @@ module Sprite
     red:           SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/red.png' }),
     green:         SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/green.png' }),
     blue:          SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/blue.png' }),
+    cyan:          SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/cyan.png' }),
     yellow:        SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/yellow.png' }),
     indigo:        SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/indigo.png' }),
     violet:        SpriteInstance.new({ w: 176,  h: 148, path: 'sprites/box/violet.png' }),

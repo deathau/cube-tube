@@ -32,6 +32,6 @@ class PauseMenu < MenuScene
   # called every tick of the game loop
   def tick(args)
     super
-    Music.pause(args) unless Music.stopped(args) || Music.paused(args)
+    Music.pause(args) unless Music.stopped?(args) || Music.paused?(args)
   end
 end

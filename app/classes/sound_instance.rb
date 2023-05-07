@@ -115,7 +115,7 @@ class SoundInstance
   end
 
   def play_music(args, opts = { channel: 0 })
-    @looping = true
+    # @looping = true
     @key = "MUSIC_CHANNEL_#{opts[:channel]}"
     play(args, opts)
   end
