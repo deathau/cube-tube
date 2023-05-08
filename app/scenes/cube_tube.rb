@@ -432,9 +432,9 @@ class CubeTubeGame < GameplayScene
   end
 
   def rotate_current_piece_right
-    @current_piece = @current_piece.transpose.map(&:reverse)
-    @current_piece = @current_piece.transpose.map(&:reverse)
-    @current_piece = @current_piece.transpose.map(&:reverse)
+    new_piece = @current_piece.transpose.map(&:reverse)
+    new_piece = new_piece.transpose.map(&:reverse)
+    new_piece = new_piece.transpose.map(&:reverse)
     new_rotation = (@current_piece_rotation + 1) % 4
     rotate_current_piece(new_piece, new_rotation)
   end
@@ -518,7 +518,7 @@ class CubeTubeGame < GameplayScene
       move_current_piece_up if Input.pressed?(@args, :up)
       if Input.pressed_or_held?(@args, :left)
         @next_move -= @current_speed / 3
-        @lock_timer -= @current_speed / 3 if @lock_timer > 0
+        @lock_timer -= 3 if @lock_timer.positive?
       end
       rotate_current_piece_left if Input.pressed?(@args, :rotate_left)
       rotate_current_piece_right if Input.pressed?(@args, :rotate_right)
@@ -536,7 +536,7 @@ class CubeTubeGame < GameplayScene
         delta_x = cursor.x - @cursor_down.x
         if delta_x.negative? && delta_x.abs > (@blocksize * 2) && @cursor_piece_x_origin == @current_piece_x
           @next_move -= @current_speed / 3
-          @lock_timer -= @current_speed / 3 if @lock_timer.positive?
+          @lock_timer -= 3 if @lock_timer.positive?
           return
         end
 
@@ -559,7 +559,11 @@ class CubeTubeGame < GameplayScene
         @current_piece_x = max_delta
       else
         if !@cursor_down.nil? && (@cursor_down_tick + 30) >= @args.state.tick_count && @cursor_piece_x_origin == @current_piece_x
-          rotate_current_piece_left
+          if @cursor_down.x < 640
+            rotate_current_piece_right
+          else
+            rotate_current_piece_left
+          end
         end
         @cursor_down = nil
         @cursor_down_tick = nil

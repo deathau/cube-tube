@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # first, third-party libraries
-require 'lib/coalesce.rb'
+require 'app/util/coalesce.rb'
 
 # then, some basic classes required for lists of assets
 require 'app/classes/sprite_instance.rb'
@@ -9,9 +9,9 @@ require 'app/classes/sound_instance.rb'
 require 'app/classes/scene_instance.rb'
 
 # then, asset lists
-require 'sprites/_list.rb'
-require 'sounds/_list.rb'
-require 'music/_list.rb'
+require 'app/sprites_list.rb'
+require 'app/sounds_list.rb'
+require 'app/music_list.rb'
 
 # then, default keybindings
 require 'app/keybindings.rb'

@@ -4,6 +4,10 @@
 def init(args)
   Input.reset_swipe(args)
   GameSetting.load_settings(args)
+
+  if args.gtk.platform?(:mobile)
+    args.gtk.set_window_fullscreen(true)
+  end
 end
 
 # Code that runs every game tick (mainly just calling other ticks)
