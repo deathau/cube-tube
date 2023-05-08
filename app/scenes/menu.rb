@@ -17,7 +17,7 @@ class MenuScene < SceneInstance
       current_option_i: 0,
       hold_delay:       0
     }
-    @spacer ||= mobile? ? 100 : 80
+    @spacer ||= 80
     @menu_options ||= menu_options
     @menu_y = opts.menu_y._?(440)
     @title ||= title
@@ -72,7 +72,7 @@ class MenuScene < SceneInstance
       end
 
       button_border = { w: 340, h: 80, x: l.x - 170, y: l.y - 55 }.merge(WHITE)
-      (args.outputs.borders << button_border) if mobile?
+      # (args.outputs.borders << button_border) if mobile?
       if args.inputs.mouse.up && args.inputs.mouse.inside_rect?(button_border)
         o = @menu_options.find { |o| o[:key] == l[:key] }
         Sound.play(args, :menu)
