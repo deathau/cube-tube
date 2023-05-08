@@ -5,5 +5,4 @@ for %%I in (.) do set CurrDirName=%%~nxI
 
 cd ..
 @echo on
-dragonruby %CurrDirName%
-EXIT /B
+dragonruby-publish --only-package %CurrDirName%
