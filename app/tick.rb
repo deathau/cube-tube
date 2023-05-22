@@ -8,7 +8,7 @@ def init(args)
   if args.gtk.platform?(:mobile)
     args.gtk.set_window_fullscreen(true)
   end
-end
+end 
 
 # Code that runs every game tick (mainly just calling other ticks)
 def tick(args)
@@ -27,6 +27,16 @@ def tick(args)
 
   args.state.scene_stack.each do |scene|
     scene.tick(args) if scene.tick_in_background || scene == args.state.scene_stack.last
+  end
+
+  if args.inputs.keyboard.key_down.home
+    screenshot_file_name = 'screenshot.png'
+    screenshot_file_count = 0
+    while $gtk.read_file(screenshot_file_name)
+      screenshot_file_count += 1
+      screenshot_file_name = "screenshot#{screenshot_file_count}.png"
+    end
+    args.outputs.screenshots << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, path: screenshot_file_name }
   end
 
   debug_tick(args)

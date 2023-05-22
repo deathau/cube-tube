@@ -15,6 +15,8 @@ if not exist ./%CurrDirName%.keystore (
 if exist ./%CurrDirName%-android.apk (
   echo "Signing apk..."
   call "C:\Program Files (x86)\Android\android-sdk\build-tools\32.0.0\apksigner.bat" sign -ks %CurrDirName%.keystore %CurrDirName%-android.apk
+  echo "Signing aab..."
+  call jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore %CurrDirName%.keystore %CurrDirName%-googleplay.aab %CurrDirName%
 ) else (
   ECHO "no apk?"
   ECHO ./%CurrDirName%-android.apk
