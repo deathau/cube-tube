@@ -1,0 +1,3 @@
+#!/bin/sh
+cd .dragonruby
+exec ./dragonruby ../🕹️cube-tube

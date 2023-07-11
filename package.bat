@@ -1,7 +1,7 @@
 @echo off
 cd /d %~dp0
 
-for %%I in (.) do set CurrDirName=%%~nxI
+set CurrDirName=🕹️cube-tube
 for /F %%a IN ('powershell -command "$([guid]::NewGuid().ToString().toUpper())"') DO (set newProductCode=%%a)
 for /F %%a IN ('powershell -command "$([guid]::NewGuid().ToString().toUpper())"') DO (set newPackageCode=%%a)
 
@@ -10,26 +10,26 @@ for /F %%a IN ('powershell -command "$([guid]::NewGuid().ToString().toUpper())"'
 @set version=0
 @for /F "tokens=*" %%A in (./metadata/game_metadata.txt) do @call :CheckForVersion "%%A"
 
-cd ..
+cd .dragonruby
 @echo on
-dragonruby-publish --only-package %CurrDirName%
+dragonruby-publish --only-package ../%CurrDirName%
 @echo off
 cd builds
 
 if exist ./%CurrDirName%-windows-amd64.exe (
-if exist ../%CurrDirName%/installer/installer.vdproj (
+if exist ../../%CurrDirName%/installer/installer.vdproj (
   echo "Building windows installer..."
-  for /F "tokens=* USEBACKQ" %%t IN (`findstr /c:"%version%" ..\%CurrDirName%\installer\installer.vdproj`) do (SET OldVersion=%%t)
+  for /F "tokens=* USEBACKQ" %%t IN (`findstr /c:"%version%" ..\..\%CurrDirName%\installer\installer.vdproj`) do (SET OldVersion=%%t)
   if defined OldVersion (
     echo "version already the same"
   ) else (
     echo "need to update version & product/package codes (%version%, %newProductCode%, %newPackageCode%)"
-    powershell -Command "(Get-Content ../%CurrDirName%/installer/installer.vdproj) | Foreach-Object { $_ -replace '""""ProductCode"""" = """"8:\{.*\}""""$', '""""ProductCode"""" = """"8:{%newProductCode%}""""' -replace '""""PackageCode"""" = """"8:\{.*\}""""$', '""""PackageCode"""" = """"8:{%newPackageCode%}""""' -replace '""""ProductVersion"""" = """"8:.+""""$', '""""ProductVersion"""" = """"8:%version%""' } | Out-File -encoding UTF8 ../%CurrDirName%/installer/installer.vdproj"
+    powershell -Command "(Get-Content ../../%CurrDirName%/installer/installer.vdproj) | Foreach-Object { $_ -replace '""""ProductCode"""" = """"8:\{.*\}""""$', '""""ProductCode"""" = """"8:{%newProductCode%}""""' -replace '""""PackageCode"""" = """"8:\{.*\}""""$', '""""PackageCode"""" = """"8:{%newPackageCode%}""""' -replace '""""ProductVersion"""" = """"8:.+""""$', '""""ProductVersion"""" = """"8:%version%""' } | Out-File -encoding UTF8 ../../%CurrDirName%/installer/installer.vdproj"
   )
-  call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" ..\%CurrDirName%\installer\installer.sln /build Release
+  call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" ..\..\%CurrDirName%\installer\installer.sln /build Release
 ) else (
   ECHO "no installer project?"
-  ECHO ../%CurrDirName%/installer/installer.vdproj
+  ECHO ../../%CurrDirName%/installer/installer.vdproj
 )
 ) else (
   ECHO "no exe?"

@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ./.dragonruby
+exec ./dragonruby-publish --only-package ../🕹️cube-tube

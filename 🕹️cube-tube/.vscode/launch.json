@@ -8,7 +8,10 @@
       "name": "Run Game",
       "type": "node-terminal",
       "request": "launch",
-      "command": "${workspaceRoot}/../dragonruby.exe ${workspaceRoot}",
+      "command": "${workspaceRoot}/../.dragonruby/dragonruby ${workspaceRoot}",
+      "windows": {
+        "command": "${workspaceRoot}/../.dragonruby/dragonruby.exe ${workspaceRoot}",
+      },
     }
   ]
 }
