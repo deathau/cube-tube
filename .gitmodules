@@ -1,3 +1,4 @@
 [submodule ".dragonruby"]
 	path = .dragonruby
 	url = https://gitea.death.id.au/death.au/dragonruby-base.git
+	tag = 5.1

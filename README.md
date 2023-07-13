@@ -1,9 +1,23 @@
-dragonruby binaries, etc are in the `.dragonruby` folder
+# Cube Tube
+_Tetrominoes on a Train!_
 
-To update dragonruby, use the following:
+This is my first DragonRuby game project. It's basically a Tetris clone, after following these tutorials:
+1. Building Tetris - Part 1: https://youtu.be/xZMwRSbC4rY
+2. Building Tetris - Part 2: https://youtu.be/C3LLzDUDgz4
+
+Then making a whole bunch of modifications, including graphics, sounds, music, rotating the whole thing on its side and more.
+
+It also made use of the [Scale Framework](https://github.com/DragonRidersUnite/scale), which itself got heavily modified and is mostly unrecognisable now.
+
+## DragonRuby
+DragonRuby binaries, etc are in a git submodule under the `.dragonruby` folder
+
+To update DragonRuby, update the `tag` value in `.gitmodules` then run the following git commands:
 ```
-git subtree add --prefix .dragonruby <path/to/dragonruby/repo> <version-tag> --squash
+git submodule sync
+git submodule foreach --recursive 'git fetch --tags'
+git submodule update --init --recursive --remote
 ```
 (or just dump the files in the .dragonruby folder)
 
-Also, make sure to dump icons in `.dragonruby/dragonruby-ios-simulator.app/Assets.xcassets/AppIcon.appiconset/` and `.dragonruby/dragonruby-ios.app/Assets.xcassets/AppIcon.appiconset` (see the `.gitkeep` files in those folders for more info)
+Also, for iOS, make sure to create icons in `marketing-assets/AppIcon.appiconset/` (see the `.gitkeep` file in that folder for more info). The `run` and `package` scripts should copy these to the correct locations in `.dragonruby/dragonruby-ios-simulator.app/Assets.xcassets/AppIcon.appiconset/` and `.dragonruby/dragonruby-ios.app/Assets.xcassets/AppIcon.appiconset` respectively.
