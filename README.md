@@ -1,5 +1,6 @@
 # Cube Tube
-_Tetrominoes on a Train!_
+_Tetrominoes on a Train!_  
+![Feature Image](./marketing-assets/feature_w.png)
 
 This is my first DragonRuby game project. It's basically a Tetris clone, after following these tutorials:
 1. Building Tetris - Part 1: https://youtu.be/xZMwRSbC4rY
