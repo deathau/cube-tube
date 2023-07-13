@@ -11,6 +11,10 @@ for /F %%a IN ('powershell -command "$([guid]::NewGuid().ToString().toUpper())"'
 @for /F "tokens=*" %%A in (./metadata/game_metadata.txt) do @call :CheckForVersion "%%A"
 
 cd .dragonruby
+
+robocopy ../marketing-assets/AppIcon.appiconset ./dragonruby-ios.app/Assets.xcassets/AppIcon.appiconset /e
+robocopy ../marketing-assets/AppIcon.appiconset ./dragonruby-ios-simulator.app/Assets.xcassets/AppIcon.appiconset /e
+
 @echo on
 dragonruby-publish --only-package ../%CurrDirName%
 @echo off

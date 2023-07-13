@@ -1,3 +1,5 @@
 #!/bin/sh
 cd "`dirname "$0"`"/.dragonruby
+cp -R ../marketing-assets/AppIcon.appiconset ./dragonruby-ios.app/Assets.xcassets/
+cp -R ../marketing-assets/AppIcon.appiconset ./dragonruby-ios-simulator.app/Assets.xcassets/
 exec ./dragonruby-publish --only-package ../🕹️cube-tube
