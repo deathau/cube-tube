@@ -123,6 +123,14 @@ class CubeTubeGame < GameplayScene
     end
     @bg_x %= @bg_w if @bg_x >= @bg_w
 
+    dirt = Sprite.for(:dirt)
+    10.times do |i|
+      dirt.render(@args, { x: @bg_x + (i * (dirt.w)), y: 0 - dirt.h + 1 })
+      dirt.render(@args, { x: @bg_x - (i * (dirt.w)), y: 0 - dirt.h + 1 })
+      dirt.render(@args, { x: @bg_x + (i * (dirt.w)), y: @args.grid.h })
+      dirt.render(@args, { x: @bg_x - (i * (dirt.w)), y: @args.grid.h })
+    end
+
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x + @bg_w, y: 0, w: @bg_w, h: 720 })
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x - @bg_w, y: 0, w: @bg_w, h: 720 })

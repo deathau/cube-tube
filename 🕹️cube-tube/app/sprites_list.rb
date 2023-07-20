@@ -25,8 +25,10 @@ module Sprite
     screen_s3:     SpriteInstance.new({ w: 250,  h: 210, path: 'sprites/screen-s3.png' }),
     screen_s4:     SpriteInstance.new({ w: 250,  h: 210, path: 'sprites/screen-s4.png' }),
     menu:          SpriteInstance.new({ w: 1280, h: 720, path: 'sprites/menu.png' }),
+    menu_l:        SpriteInstance.new({ w: 2760, h: 1550, path: 'sprites/menu_l.png', x: -740, y: -415 }),
     tunnel_loop:   SpriteInstance.new({ w: 1358, h: 720, path: 'sprites/tunnel-loop.png' }),
     tracks:        SpriteInstance.new({ w: 1358, h: 55,  path: 'sprites/tracks.png' }),
+    dirt:          SpriteInstance.new({ w: 194,  h: 150, path: 'sprites/dirt.png' }),
     station_loop:  SpriteInstance.new({ w: 1811, h: 720, path: 'sprites/station-loop.png' }),
     station_start: SpriteInstance.new({ w: 618,  h: 720, path: 'sprites/station-start.png' }),
     station_end:   SpriteInstance.new({ w: 518,  h: 720, path: 'sprites/station-end.png' })

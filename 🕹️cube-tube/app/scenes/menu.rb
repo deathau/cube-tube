@@ -88,7 +88,7 @@ class MenuScene < SceneInstance
     super
     @first_render = args.state.tick_count if @first_render.nil?
 
-    Sprite.for(:menu).render(args)
+    Sprite.for(:menu_l).render(args)
 
     args.outputs.labels << label(
       @title.to_s.upcase,

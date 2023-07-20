@@ -9,6 +9,7 @@ class Intro < GameplayScene
     @train_spline = [
       [1.0, 0.25, 0, 0]
     ]
+    @full_station_w = Sprite.for(:station_loop).w + Sprite.for(:station_end).w
     @station_start_w = Sprite.for(:station_start).w
     @tunnel_w = Sprite.for(:tunnel_loop).w
     @full_station_start_w = @station_start_w + @tunnel_w
@@ -62,6 +63,14 @@ class Intro < GameplayScene
       if @station_pos >= @full_station_start_w
         Scene.switch(args, :cube_tube, reset: true)
       end
+    end
+
+    dirt = Sprite.for(:dirt)
+    dx = 0 - @full_station_start_w - @tunnel_w
+    while dx < @full_station_w
+      dirt.render(args, { x: @station_pos + dx, y: 0 - dirt.h + 1 })
+      dirt.render(args, { x: @station_pos + dx, y: args.grid.h })
+      dx += dirt.w
     end
 
     Sprite.for(:station_loop).render(args, { x: @station_pos })
