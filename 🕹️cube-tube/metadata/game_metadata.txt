@@ -30,7 +30,7 @@ orientation=landscape
 # HD Mode: when enabled, will give you 720p, 1080p, 1440p, 4k, and 5k rendering options
 # Check out the following YouTube Video for a demo of DragonRuby's HD Capabilities
 # https://youtu.be/Rnc6z84zaa4
-# hd=false
+hd=true
 
 # === Texture Atlases ===
 
@@ -42,7 +42,7 @@ orientation=landscape
 
 # All Screen Mode: when enabled, removes the letter box and lets you render outside of the 16:9 safe area
 # NOTE: requires hd=true
-# allscreen=false
+allscreen=true
 
 # All Screen Mode's Max Scale: You can specify the maximum scale for your game. Any resolution higher than your max scale will give more area outside of your resolutions safe area:
 
@@ -70,4 +70,4 @@ orientation=landscape
 # allscreen_max_scale=300
 
 # 5k: scales up to 6400x2880
-# allscreen_max_scale=400
+allscreen_max_scale=400

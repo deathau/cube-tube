@@ -10,10 +10,11 @@ class Intro < GameplayScene
       [1.0, 0.25, 0, 0]
     ]
     @station_start_w = Sprite.for(:station_start).w
-    @full_station_start_w = Sprite.for(:station_start).w + Sprite.for(:tunnel_loop).w
+    @tunnel_w = Sprite.for(:tunnel_loop).w
+    @full_station_start_w = @station_start_w + @tunnel_w
     @tracks_w = Sprite.for(:tracks).w
 
-    @leave_duration = 600
+    @leave_duration = 500
     @leave_spline = [
       [0, 0, 0.5, 1.0]
     ]
@@ -40,7 +41,7 @@ class Intro < GameplayScene
         @state += 1
       end
     when 1
-      @train_pos = 1280 * args.easing.ease_spline(@train_start, now, @train_duration, @train_spline)
+      @train_pos = @train_start_pos * args.easing.ease_spline(@train_start, now, @train_duration, @train_spline)
       if @train_pos <= 0
         @state += 1
         @wait_start = now
@@ -66,6 +67,7 @@ class Intro < GameplayScene
     Sprite.for(:station_loop).render(args, { x: @station_pos })
     Sprite.for(:station_start).render(args, { x: @station_pos - @station_start_w })
     Sprite.for(:tunnel_loop).render(args, { x: @station_pos - @full_station_start_w })
+    Sprite.for(:tunnel_loop).render(args, { x: @station_pos - @full_station_start_w - @tunnel_w })
 
     Sprite.for(:train).render(args, { y: 39.25, x: @train_pos })
     Sprite.for(:screen).render(args, { x: @train_pos + 1024, y: 270 })
@@ -98,7 +100,7 @@ class Intro < GameplayScene
     @train_start = 0
     @wait_start = 0
     @leave_start = 0
-    @train_pos = 1280
+    @train_pos = @train_start_pos = 1500
     @station_pos = 0
     @screen_on = false
   end

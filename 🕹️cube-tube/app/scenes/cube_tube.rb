@@ -123,8 +123,10 @@ class CubeTubeGame < GameplayScene
     end
     @bg_x %= @bg_w if @bg_x >= @bg_w
 
+    Sprite.for(:tunnel_loop).render(@args, { x: @bg_x + @bg_w, y: 0, w: @bg_w, h: 720 })
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x, y: 0, w: @bg_w, h: 720 })
     Sprite.for(:tunnel_loop).render(@args, { x: @bg_x - @bg_w, y: 0, w: @bg_w, h: 720 })
+    Sprite.for(:tunnel_loop).render(@args, { x: @bg_x - (@bg_w * 2), y: 0, w: @bg_w, h: 720 })
 
     # @grid_y = ((1280 - (@grid_h * @blocksize)) / 2) - 21
     Sprite.for(:train).render(@args, { x: 0, y: @grid_x - 140.75 })
