@@ -10,6 +10,10 @@ class PauseMenu < MenuScene
         on_select: ->(args) { Scene.pop(args) }
       },
       {
+        key:       :restart,
+        on_select: ->(args) { Scene.switch(args, :intro, reset: true) }
+      },
+      {
         key:       :settings,
         on_select: ->(args) { Scene.push(args, :settings, reset: true, reset_on_pop: true) }
       },
@@ -19,12 +23,12 @@ class PauseMenu < MenuScene
       }
     ]
 
-    if args.gtk.platform?(:desktop)
-      menu_options << {
-        key:       :quit,
-        on_select: ->(args) { args.gtk.request_quit }
-      }
-    end
+    # if args.gtk.platform?(:desktop)
+    #   menu_options << {
+    #     key:       :quit,
+    #     on_select: ->(args) { args.gtk.request_quit }
+    #   }
+    # end
 
     super args, opts, :paused, menu_options
   end

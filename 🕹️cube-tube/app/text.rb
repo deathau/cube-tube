@@ -16,6 +16,7 @@ TEXT = {
   paused: "Paused",
   quit: "Quit",
   resume: "Resume",
+  restart: "Restart",
   return_to_main_menu: "Main Menu",
   settings: "Settings",
   sfx: "Sound Effects",
