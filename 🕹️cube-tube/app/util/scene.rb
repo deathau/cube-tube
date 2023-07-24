@@ -23,12 +23,12 @@ module Scene
       # if `scene` is not a `SceneInstance`, it's probably a symbol representing
       # the scene we're switching to, so go get it.
       the_scene = scene.is_a?(SceneInstance) ? scene : SCENES[scene].new(args)
-      puts '---'
-      puts 'switching to'
-      puts scene unless scene.is_a?(SceneInstance)
-      puts SCENES[scene] unless scene.is_a?(SceneInstance)
-      puts the_scene
-      puts '---'
+      # puts '---'
+      # puts 'switching to'
+      # puts scene unless scene.is_a?(SceneInstance)
+      # puts SCENES[scene] unless scene.is_a?(SceneInstance)
+      # puts the_scene
+      # puts '---'
 
       # if the stack is empty (e.g. we just cleared it), then push this scene
       args.state.scene_stack.push(the_scene) if args.state.scene_stack.empty?
@@ -56,7 +56,7 @@ module Scene
       scene = args.state.scene_stack.last
       scene = scene._?(default(args))
       reset = scene.reset_on_pop if reset.nil?
-      puts reset, scene, scene.reset_on_pop
+      # puts reset, scene, scene.reset_on_pop
 
       switch(args, scene, reset: reset, push_or_pop: true)
     end
