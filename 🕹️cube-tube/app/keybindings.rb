@@ -5,7 +5,7 @@ module Input
   class << self
     PRIMARY_KEYS = [:j, :z, :space]
     SECONDARY_KEYS = [:k, :x, :backspace]
-    PAUSE_KEYS = [:escape, :p]
+    PAUSE_KEYS = [:escape]
     BINDINGS = {
       primary:      {
         keyboard:       %i[j z space],
@@ -16,7 +16,7 @@ module Input
         controller_one: %i[b]
       },
       pause:        {
-        keyboard:       %i[escape p],
+        keyboard:       %i[escape],
         controller_one: %i[start]
       },
       rotate_left:  {
